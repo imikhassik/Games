@@ -7,12 +7,12 @@ board = [
 
 
 def print_board(t, x=0, y=0):
+    # Принимает символ на замену '-' и координаты
+    # Распечатывает поле
     if t == 'x':
         board[x][y] = 'x'
     elif t == 'o':
         board[x][y] = 'o'
-    else:
-        pass
 
     for i in board:
         for j in i:
@@ -21,6 +21,9 @@ def print_board(t, x=0, y=0):
 
 
 def get_coordinates():
+    # Запрашивает ввод у пользователя и превращает ввод в координаты
+    # Если ввод вне диапазона 0-2, запрашивает ввод бесконечно
+    # Если ввод не из 2-х чисел, запрашивает два числа
     x, y = ' ', ' '
     while x not in "012" or y not in "012":
         try:
@@ -31,14 +34,17 @@ def get_coordinates():
     return int(x)+1, int(y)+1
 
 
-def check_availability(i, j):
-    if board[i][j] == '-':
+def not_available(x, y):
+    # Проверяет, можно ли ввести значение или уже занято
+    if board[x][y] == '-':
         return False
     else:
+        print("Занято")
         return True
 
 
 def winner():
+    # Сравнивает символы в рядах, колонках и по диагоналям, отсеивает '-'
     for row in board[1:]:
         if (row[1] == row[2] == row[3]) and '-' not in row:
             return True
@@ -52,6 +58,7 @@ def winner():
 
 
 def draw():
+    # Возвращает True, когда все ячейки заполнены символами кроме '-'
     for row in board[1:]:
         for column in row[1:]:
             if column == '-':
@@ -66,8 +73,7 @@ while True:
     turn = 'x' if turn == 'o' else 'o'
     print(f"Очередь {turn}")
     row, column = get_coordinates()
-    if check_availability(row, column):
-        print("Занято")
+    if not_available(row, column):
         turn = 'x' if turn == 'o' else 'o'
         continue
     print_board(turn, row, column)
@@ -75,5 +81,5 @@ while True:
         print('Ничья')
         break
     elif winner():
-        print(f'{turn} выиграли!')
+        print(f'{turn} выиграл!')
         break
