@@ -1,3 +1,17 @@
+def instructions():
+    print("-------------------------------------------------")
+    print("                  МОРСКОЙ БОЙ                    ")
+    print("-------------------------------------------------")
+    print("   Введите координаты, чтобы расположить корабли:")
+    print("   1 корабль на 3 клетки, 2 на две, 4 на одну.   ")
+    print("   Достаточно указать первую клетку и направление")
+    print("   Например: 1 1 d расположит корабль от левой   ")
+    print("   верхней клетки по диагонали.                  ")
+    print("   Направления: h - по горизонтали, v - по верти-")
+    print("   кали, d - по диагонали                        ")
+    print("-------------------------------------------------")
+
+
 class Board:
     def __init__(self):
         self.board = [['O'] * 6 for _ in range(6)]
@@ -19,14 +33,17 @@ class Board:
 
 
 class Ship:
-    def __init__(self, direction='h', size=3, x=0, y=0):
-        self.direction = direction
-        self.size = size
+    def __init__(self, x=0, y=0, direction='h', size=3):
         self.x = x
         self.y = y
+        self.direction = direction
+        self.size = size
 
-    # def get_coordinates(self):
-    #     self.x, self.y = input("Введите началь")
+    def get_coordinates(self):
+        self.x, self.y, self.direction = input("Введите координаты корабля: ").split()
+        self.x, self.y = map(int, (self.x, self.y))
+        self.x -= 1
+        self.y -= 1
 
 
 def print_boards(board_1, board_2):
@@ -40,29 +57,20 @@ def print_boards(board_1, board_2):
             print(f"{board_2.get_board()[i][j]}", end=' | ')
         print('\n')
 
-# def setup_ships():
-#     user_ship_1
 
-
-def instructions():
-    print("-------------------------------------------------")
-    print("                  МОРСКОЙ БОЙ                    ")
-    print("-------------------------------------------------")
-    print("   Введите координаты, чтобы расположить корабли:")
-    print("   1 корабль на 3 клетки, 2 на две, 4 на одну.   ")
-    print("   Достаточно указать первую клетку и направление")
-    print("   Например: 1 1 d расположит корабль от левой   ")
-    print("   верхней клетки по диагонали.                  ")
-    print("   Направления: h - по горизонтали, v - по верти-")
-    print("   кали, d - по диагонали                              ")
-    print("-------------------------------------------------")
+def setup_ships():
+    ships = {}
+    sizes = [3, 2, 2, 1, 1, 1, 1]
+    for i, size in enumerate(sizes):
+        ships[i] = Ship()
+        ships[i].size = size
+        ships[i].get_coordinates()
+        user_board.place_ship(ships[i])
+        print_boards(user_board, ai_board)
 
 
 instructions()
 user_board = Board()
 ai_board = Board()
-user_ship_1 = Ship('d', 3, 0, 0)
-user_ship_2 = Ship('h', 2, 4, 4)
-user_board.place_ship(user_ship_1)
-user_board.place_ship(user_ship_2)
 print_boards(user_board, ai_board)
+setup_ships()
