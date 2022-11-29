@@ -52,7 +52,7 @@ class Ship:
                 else:
                     self.x, self.y = input("Введите координаты корабля: ").split()
                 self.x, self.y = map(int, (self.x, self.y))
-                if self.x and self.y in range(1, 7) and self.direction in ('h', 'v', 'd'):
+                if self.x in range(1, 7) and self.y in range(1, 7) and self.direction in ('h', 'v', 'd'):
                     self.x -= 1
                     self.y -= 1
                     break
