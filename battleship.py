@@ -46,14 +46,18 @@ class Ship:
 
     def get_coordinates(self):
         while True:
-            self.x, self.y, self.direction = input("Введите координаты корабля: ").split()
-            self.x, self.y = map(int, (self.x, self.y))
-            if self.x and self.y in range(1, 7):
-                self.x -= 1
-                self.y -= 1
-                break
-            else:
-                print("Координаты за пределами поля")
+            try:
+                self.x, self.y, self.direction = input("Введите координаты корабля: ").split()
+                self.x, self.y = map(int, (self.x, self.y))
+                if self.x and self.y in range(1, 7):
+                    self.x -= 1
+                    self.y -= 1
+                    break
+                else:
+                    print("Координаты за пределами поля")
+            except ValueError:
+                print("Некорректные координаты. Пример корректного ввода: 2 1 h")
+                continue
 
 
 def print_boards(board_1, board_2):
