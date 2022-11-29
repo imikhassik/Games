@@ -22,19 +22,34 @@ class Board:
     def place_ship(self, ship):
         try:
             while ship.size:
-                self.board[ship.x][ship.y] = '■'
-                if ship.direction == 'v' and ship.size > 1:
-                    ship.x += 1
-                elif ship.direction == 'h' and ship.size > 1:
-                    ship.y += 1
-                elif ship.direction == 'd' and ship.size > 1:
-                    ship.x += 1
-                    ship.y += 1
-                ship.size -= 1
+                if ship.radar():
+                    self.board[ship.x][ship.y] = '*'
+                    if ship.direction == 'v' and ship.size > 1:
+                        ship.x += 1
+                    elif ship.direction == 'h' and ship.size > 1:
+                        ship.y += 1
+                    elif ship.direction == 'd' and ship.size > 1:
+                        ship.x += 1
+                        ship.y += 1
+                    ship.size -= 1
+                else:
+                    return False
             return True
         except IndexError:
             print("Координаты за пределами поля")
             return False
+
+    def confirm_placement(self, flag):
+        if flag == 1:
+            for row in range(6):
+                for column in range(6):
+                    if self.get_board()[row][column] == '*':
+                        self.get_board()[row][column] = '■'
+        else:
+            for row in range(6):
+                for column in range(6):
+                    if self.get_board()[row][column] == '*':
+                        self.get_board()[row][column] = 'O'
 
 
 class Ship:
@@ -117,8 +132,12 @@ def setup_ships():
         ships[i].size = sizes[i]
         ships[i].get_coordinates()
         if user_board.place_ship(ships[i]):
+            user_board.confirm_placement(1)
             print_boards(user_board, ai_board)
             i += 1
+        else:
+            user_board.confirm_placement(0)
+            continue
 
 
 instructions()
