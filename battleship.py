@@ -20,16 +20,21 @@ class Board:
         return self.board
 
     def place_ship(self, ship):
-        while ship.size:
-            self.board[ship.x][ship.y] = '■'
-            if ship.direction == 'v':
-                ship.x += 1
-            elif ship.direction == 'h':
-                ship.y += 1
-            elif ship.direction == 'd':
-                ship.x += 1
-                ship.y += 1
-            ship.size -= 1
+        try:
+            while ship.size:
+                self.board[ship.x][ship.y] = '■'
+                if ship.direction == 'v':
+                    ship.x += 1
+                elif ship.direction == 'h':
+                    ship.y += 1
+                elif ship.direction == 'd':
+                    ship.x += 1
+                    ship.y += 1
+                ship.size -= 1
+            return True
+        except IndexError:
+            print("Координаты за пределами поля")
+            return False
 
 
 class Ship:
@@ -40,10 +45,15 @@ class Ship:
         self.size = size
 
     def get_coordinates(self):
-        self.x, self.y, self.direction = input("Введите координаты корабля: ").split()
-        self.x, self.y = map(int, (self.x, self.y))
-        self.x -= 1
-        self.y -= 1
+        while True:
+            self.x, self.y, self.direction = input("Введите координаты корабля: ").split()
+            self.x, self.y = map(int, (self.x, self.y))
+            if self.x and self.y in range(1, 7):
+                self.x -= 1
+                self.y -= 1
+                break
+            else:
+                print("Координаты за пределами поля")
 
 
 def print_boards(board_1, board_2):
@@ -61,12 +71,14 @@ def print_boards(board_1, board_2):
 def setup_ships():
     ships = {}
     sizes = [3, 2, 2, 1, 1, 1, 1]
-    for i, size in enumerate(sizes):
+    i = 0
+    while i <= 6:
         ships[i] = Ship()
-        ships[i].size = size
+        ships[i].size = sizes[i]
         ships[i].get_coordinates()
-        user_board.place_ship(ships[i])
-        print_boards(user_board, ai_board)
+        if user_board.place_ship(ships[i]):
+            print_boards(user_board, ai_board)
+            i += 1
 
 
 instructions()
