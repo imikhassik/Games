@@ -22,6 +22,9 @@ class Board:
     def place_ship(self, ship):
         try:
             while ship.size:
+                if self.board[ship.x][ship.y] == '■':
+                    print("Клетка занята")
+                    return False
                 self.board[ship.x][ship.y] = '■'
                 if ship.direction == 'v' and ship.size > 1:
                     ship.x += 1
