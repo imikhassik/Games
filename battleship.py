@@ -23,11 +23,11 @@ class Board:
         try:
             while ship.size:
                 self.board[ship.x][ship.y] = '■'
-                if ship.direction == 'v':
+                if ship.direction == 'v' and ship.size > 1:
                     ship.x += 1
-                elif ship.direction == 'h':
+                elif ship.direction == 'h' and ship.size > 1:
                     ship.y += 1
-                elif ship.direction == 'd':
+                elif ship.direction == 'd' and ship.size > 1:
                     ship.x += 1
                     ship.y += 1
                 ship.size -= 1
@@ -47,7 +47,10 @@ class Ship:
     def get_coordinates(self):
         while True:
             try:
-                self.x, self.y, self.direction = input("Введите координаты корабля: ").split()
+                if self.size > 1:
+                    self.x, self.y, self.direction = input("Введите координаты и направление корабля: ").split()
+                else:
+                    self.x, self.y = input("Введите координаты корабля: ").split()
                 self.x, self.y = map(int, (self.x, self.y))
                 if self.x and self.y in range(1, 7):
                     self.x -= 1
@@ -56,7 +59,10 @@ class Ship:
                 else:
                     print("Координаты за пределами поля")
             except ValueError:
-                print("Некорректные координаты. Пример корректного ввода: 2 1 h")
+                if self.size > 1:
+                    print("Некорректные координаты. Пример корректного ввода: 2 1 h")
+                else:
+                    print("Некорректные координаты. Пример корректного ввода для корабля на одну клетку: 2 1")
                 continue
 
 
