@@ -52,10 +52,12 @@ class Ship:
                 else:
                     self.x, self.y = input("Введите координаты корабля: ").split()
                 self.x, self.y = map(int, (self.x, self.y))
-                if self.x and self.y in range(1, 7):
+                if self.x and self.y in range(1, 7) and self.direction in ('h', 'v', 'd'):
                     self.x -= 1
                     self.y -= 1
                     break
+                elif self.direction not in ('h', 'v', 'd'):
+                    print("Направление: h - по горизонтали, v - по вертикали, d - по диагонали")
                 else:
                     print("Координаты за пределами поля")
             except ValueError:
