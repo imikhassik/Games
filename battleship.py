@@ -70,6 +70,10 @@ class Board:
                     print(f"{self.board[i][j]}", end=' | ')
                 print('\n')
 
+    def reload(self):
+        self.__init__()
+        Ship.setup_fleet(self, 1)
+
 
 class Ship:
     def __init__(self, x=0, y=0, direction='h', size=3):
@@ -131,10 +135,9 @@ class Ship:
         for row in search_area:
             if '■' in row and board == user_board:
                 print("Другой корабль слишком близко")
-                reload = input("Очистить поле? (y/n): ").lower()
-                if reload == 'y':
-                    board.__init__()
-                    Ship.setup_fleet(board, 1)
+                cleanup = input("Очистить поле? (y/n): ").lower()
+                if cleanup == 'y':
+                    board.reload()
                 else:
                     return False
             # elif '■' in row and board == ai_board:
