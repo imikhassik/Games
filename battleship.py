@@ -20,16 +20,36 @@ class Board:
         return self.board
 
     def place_ship(self, ship):
-        while ship.size:
-            self.board[ship.x][ship.y] = '■'
-            if ship.direction == 'v':
-                ship.x += 1
-            elif ship.direction == 'h':
-                ship.y += 1
-            elif ship.direction == 'd':
-                ship.x += 1
-                ship.y += 1
-            ship.size -= 1
+        try:
+            while ship.size:
+                if ship.radar():
+                    self.board[ship.x][ship.y] = '*'
+                    if ship.direction == 'v' and ship.size > 1:
+                        ship.x += 1
+                    elif ship.direction == 'h' and ship.size > 1:
+                        ship.y += 1
+                    elif ship.direction == 'd' and ship.size > 1:
+                        ship.x += 1
+                        ship.y += 1
+                    ship.size -= 1
+                else:
+                    return False
+            return True
+        except IndexError:
+            print("Координаты за пределами поля")
+            return False
+
+    def confirm_placement(self, flag):
+        if flag == 1:
+            for row in range(6):
+                for column in range(6):
+                    if self.get_board()[row][column] == '*':
+                        self.get_board()[row][column] = '■'
+        else:
+            for row in range(6):
+                for column in range(6):
+                    if self.get_board()[row][column] == '*':
+                        self.get_board()[row][column] = 'O'
 
 
 class Ship:
@@ -40,10 +60,55 @@ class Ship:
         self.size = size
 
     def get_coordinates(self):
-        self.x, self.y, self.direction = input("Введите координаты корабля: ").split()
-        self.x, self.y = map(int, (self.x, self.y))
-        self.x -= 1
-        self.y -= 1
+        while True:
+            try:
+                if self.size > 1:
+                    self.x, self.y, self.direction = input("Введите координаты и направление корабля: ").split()
+                else:
+                    self.x, self.y = input("Введите координаты корабля: ").split()
+                self.x, self.y = map(int, (self.x, self.y))
+                if self.x in range(1, 7) and self.y in range(1, 7) and self.direction in ('h', 'v', 'd'):
+                    self.x -= 1
+                    self.y -= 1
+                    break
+                elif self.direction not in ('h', 'v', 'd'):
+                    print("Направление: h - по горизонтали, v - по вертикали, d - по диагонали")
+                else:
+                    print("Координаты за пределами поля")
+            except ValueError:
+                if self.size > 1:
+                    print("Некорректные координаты. Пример корректного ввода: 2 1 h")
+                else:
+                    print("Некорректные координаты. Пример корректного ввода для корабля на одну клетку: 2 1")
+                continue
+
+    def radar(self):
+        search_area = user_board.get_board().copy()
+        if 0 < self.x < 5 and 0 < self.y < 5:
+            search_area = [row[self.y-1:self.y+2] for row in search_area[self.x-1:self.x+2]]
+        elif self.x == 0 and self.y == 0:
+            search_area = [row[self.y:self.y+2] for row in search_area[self.x:self.x+2]]
+        elif self.x == 5 and self.y == 0:
+            search_area = [row[self.y:self.y+2] for row in search_area[self.x-1:self.x+1]]
+        elif self.x == 0 and self.y == 5:
+            search_area = [row[self.y-1:self.y+1] for row in search_area[self.x:self.x+2]]
+        elif self.x == 5 and self.y == 5:
+            search_area = [row[self.y-1:self.y+1] for row in search_area[self.x-1:self.x+1]]
+        elif self.x == 0:
+            search_area = [row[self.y-1:self.y+2] for row in search_area[self.x:self.x+2]]
+        elif self.x == 5:
+            search_area = [row[self.y-1:self.y+2] for row in search_area[self.x-1:self.x+1]]
+        elif self.y == 0:
+            search_area = [row[self.y:self.y+2] for row in search_area[self.x-1:self.x+2]]
+        elif self.y == 5:
+            search_area = [row[self.y-1:self.y+1] for row in search_area[self.x-1:self.x+2]]
+
+        for row in search_area:
+            if '■' in row:
+                print("Другой корабль слишком близко")
+                return False
+        else:
+            return True
 
 
 def print_boards(board_1, board_2):
@@ -61,12 +126,18 @@ def print_boards(board_1, board_2):
 def setup_ships():
     ships = {}
     sizes = [3, 2, 2, 1, 1, 1, 1]
-    for i, size in enumerate(sizes):
+    i = 0
+    while i <= 6:
         ships[i] = Ship()
-        ships[i].size = size
+        ships[i].size = sizes[i]
         ships[i].get_coordinates()
-        user_board.place_ship(ships[i])
-        print_boards(user_board, ai_board)
+        if user_board.place_ship(ships[i]):
+            user_board.confirm_placement(1)
+            print_boards(user_board, ai_board)
+            i += 1
+        else:
+            user_board.confirm_placement(0)
+            continue
 
 
 instructions()
