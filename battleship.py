@@ -5,10 +5,10 @@ def instructions():
     print("   Введите координаты, чтобы расположить корабли:")
     print("   1 корабль на 3 клетки, 2 на две, 4 на одну.   ")
     print("   Достаточно указать первую клетку и направление")
-    print("   Например: 1 1 d расположит корабль от левой   ")
-    print("   верхней клетки по диагонали.                  ")
-    print("   Направления: h - по горизонтали, v - по верти-")
-    print("   кали, d - по диагонали                        ")
+    print("   Например: 1 1 v расположит корабль от левой   ")
+    print("   верхней клетки по вертикали.                  ")
+    print("   Направления:                                  ")
+    print("   h - по горизонтали, v - по вертикали          ")
     print("-------------------------------------------------")
 
 
@@ -28,9 +28,6 @@ class Board:
                         ship.x += 1
                     elif ship.direction == 'h' and ship.size > 1:
                         ship.y += 1
-                    elif ship.direction == 'd' and ship.size > 1:
-                        ship.x += 1
-                        ship.y += 1
                     ship.size -= 1
                 else:
                     return False
@@ -40,7 +37,7 @@ class Board:
             return False
 
     def confirm_placement(self, flag):
-        if flag == 1:
+        if flag:
             for row in range(6):
                 for column in range(6):
                     if self.get_board()[row][column] == '*':
@@ -67,12 +64,12 @@ class Ship:
                 else:
                     self.x, self.y = input("Введите координаты корабля: ").split()
                 self.x, self.y = map(int, (self.x, self.y))
-                if self.x in range(1, 7) and self.y in range(1, 7) and self.direction in ('h', 'v', 'd'):
+                if self.x in range(1, 7) and self.y in range(1, 7) and self.direction in ('h', 'v'):
                     self.x -= 1
                     self.y -= 1
                     break
-                elif self.direction not in ('h', 'v', 'd'):
-                    print("Направление: h - по горизонтали, v - по вертикали, d - по диагонали")
+                elif self.direction not in ('h', 'v'):
+                    print("Направление: h - по горизонтали, v - по вертикали")
                 else:
                     print("Координаты за пределами поля")
             except ValueError:
