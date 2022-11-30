@@ -127,7 +127,7 @@ class Ship:
             return True
 
     @staticmethod
-    def setup_ships():
+    def setup_fleet():
         ships = {}
         sizes = [3, 2, 2, 1, 1, 1, 1]
         i = 0
@@ -148,4 +148,4 @@ instructions()
 user_board = Board()
 ai_board = Board()
 user_board.print_boards()
-Ship.setup_ships()
+Ship.setup_fleet()
