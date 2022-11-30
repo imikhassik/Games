@@ -122,16 +122,25 @@ class Ship:
         for row in search_area:
             if '■' in row:
                 print("Другой корабль слишком близко")
-                return False
+                reload = input("Очистить поле? (y/n): ").lower()
+                if reload == 'y':
+                    user_board.__init__()
+                    Ship.setup_fleet(1)
+                else:
+                    return False
         else:
             return True
 
     @staticmethod
-    def setup_fleet():
+    def setup_fleet(reload=0):
         ships = {}
         sizes = [3, 2, 2, 1, 1, 1, 1]
         i = 0
         while i <= 6:
+            if reload:
+                i = 0
+                reload = 0
+                user_board.print_boards()
             ships[i] = Ship()
             ships[i].size = sizes[i]
             ships[i].get_coordinates()
