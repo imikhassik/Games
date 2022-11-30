@@ -126,26 +126,26 @@ class Ship:
         else:
             return True
 
-
-def setup_ships():
-    ships = {}
-    sizes = [3, 2, 2, 1, 1, 1, 1]
-    i = 0
-    while i <= 6:
-        ships[i] = Ship()
-        ships[i].size = sizes[i]
-        ships[i].get_coordinates()
-        if user_board.place_ship(ships[i]):
-            user_board.confirm_placement(1)
-            user_board.print_boards()
-            i += 1
-        else:
-            user_board.confirm_placement(0)
-            continue
+    @staticmethod
+    def setup_ships():
+        ships = {}
+        sizes = [3, 2, 2, 1, 1, 1, 1]
+        i = 0
+        while i <= 6:
+            ships[i] = Ship()
+            ships[i].size = sizes[i]
+            ships[i].get_coordinates()
+            if user_board.place_ship(ships[i]):
+                user_board.confirm_placement(1)
+                user_board.print_boards()
+                i += 1
+            else:
+                user_board.confirm_placement(0)
+                continue
 
 
 instructions()
 user_board = Board()
 ai_board = Board()
 user_board.print_boards()
-setup_ships()
+Ship.setup_ships()
