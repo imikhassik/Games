@@ -48,6 +48,25 @@ class Board:
                     if self.get_board()[row][column] == '*':
                         self.get_board()[row][column] = 'O'
 
+    def print_boards(self, other=None):
+        if other:
+            print('  | 1 | 2 | 3 | 4 | 5 | 6 |       | 1 | 2 | 3 | 4 | 5 | 6 |\n')
+            for i in range(6):
+                print(i + 1, end=' | ')
+                for j in range(6):
+                    print(f"{self.board[i][j]}", end=' | ')
+                print(f'\t{i + 1}', end=' | ')
+                for j in range(6):
+                    print(f"{other.get_board()[i][j]}", end=' | ')
+                print('\n')
+        else:
+            print('  | 1 | 2 | 3 | 4 | 5 | 6 |\n')
+            for i in range(6):
+                print(i + 1, end=' | ')
+                for j in range(6):
+                    print(f"{self.board[i][j]}", end=' | ')
+                print('\n')
+
 
 class Ship:
     def __init__(self, x=0, y=0, direction='h', size=3):
@@ -108,18 +127,6 @@ class Ship:
             return True
 
 
-def print_boards(board_1, board_2):
-    print('  | 1 | 2 | 3 | 4 | 5 | 6 |       | 1 | 2 | 3 | 4 | 5 | 6 |\n')
-    for i in range(6):
-        print(i + 1, end=' | ')
-        for j in range(6):
-            print(f"{board_1.get_board()[i][j]}", end=' | ')
-        print(f'\t{i + 1}', end=' | ')
-        for j in range(6):
-            print(f"{board_2.get_board()[i][j]}", end=' | ')
-        print('\n')
-
-
 def setup_ships():
     ships = {}
     sizes = [3, 2, 2, 1, 1, 1, 1]
@@ -130,7 +137,7 @@ def setup_ships():
         ships[i].get_coordinates()
         if user_board.place_ship(ships[i]):
             user_board.confirm_placement(1)
-            print_boards(user_board, ai_board)
+            user_board.print_boards()
             i += 1
         else:
             user_board.confirm_placement(0)
@@ -140,5 +147,5 @@ def setup_ships():
 instructions()
 user_board = Board()
 ai_board = Board()
-print_boards(user_board, ai_board)
+user_board.print_boards()
 setup_ships()
