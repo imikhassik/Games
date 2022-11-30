@@ -137,8 +137,8 @@ class Ship:
                     Ship.setup_fleet(board, 1)
                 else:
                     return False
-            elif '■' in row and board == ai_board:
-                return False
+            # elif '■' in row and board == ai_board:
+
         else:
             return True
 
@@ -147,7 +147,6 @@ class Ship:
         ships = {}
         sizes = [3, 2, 2, 1, 1, 1, 1]
         i = 0
-        attempts = 10
         while i <= 6:
             if reload:
                 i = 0
@@ -161,12 +160,8 @@ class Ship:
                 board.print_boards()
                 i += 1
             else:
-                while attempts:
-                    board.confirm_placement(0)
-                    attempts -= 1
-                    if attempts == 1:
-                        reload = 1
-                    continue
+                board.confirm_placement(0)
+                continue
 
 
 instructions()
@@ -174,4 +169,4 @@ user_board = Board()
 ai_board = Board()
 user_board.print_boards()
 Ship.setup_fleet(user_board)
-Ship.setup_fleet(ai_board)
+# Ship.setup_fleet(ai_board)
