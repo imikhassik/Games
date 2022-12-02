@@ -27,9 +27,9 @@ class Board:
             while ship.size:
                 if ship.radar(board):
                     self.board[ship.x][ship.y] = '*'
-                    if ship.direction == 'v' and ship.size > 1:
+                    if ship.direction in ('v', 'V') and ship.size > 1:
                         ship.x += 1
-                    elif ship.direction == 'h' and ship.size > 1:
+                    elif ship.direction in ('h', 'H') and ship.size > 1:
                         ship.y += 1
                     ship.size -= 1
                 else:
@@ -85,7 +85,7 @@ class Board:
 
     def shoot(self, other):
         x, y = None, None
-        if self.board == user_board:
+        if other == ai_board:
             while Board.scan(other):
                 try:
                     x, y = input("Введите координаты выстрела: ").split()
@@ -97,7 +97,7 @@ class Board:
                         print("Сюда уже стреляли!")
                         continue
                     break
-                except ValueError:
+                except (ValueError, IndexError):
                     print("Некорректные координаты. Пример корректного ввода: 2 1")
                     continue
         else:
@@ -130,11 +130,11 @@ class Ship:
                     else:
                         self.x, self.y = input("Введите координаты корабля: ").split()
                     self.x, self.y = map(int, (self.x, self.y))
-                    if self.x in range(1, 7) and self.y in range(1, 7) and self.direction in ('h', 'v'):
+                    if self.x in range(1, 7) and self.y in range(1, 7) and self.direction in ('h', 'H', 'v', 'V'):
                         self.x -= 1
                         self.y -= 1
                         break
-                    elif self.direction not in ('h', 'v'):
+                    elif self.direction not in ('h', 'H', 'v', 'V'):
                         print("Направление: h - по горизонтали, v - по вертикали")
                     else:
                         print("Координаты за пределами поля")
@@ -190,7 +190,7 @@ class Ship:
         ships = {}
         sizes = [3, 2, 2, 1, 1, 1, 1]
         i = 0
-        failed_attempt = 0
+        failed_attempts = 0
         while i <= 6:
             if reload:
                 i = 0
@@ -202,15 +202,30 @@ class Ship:
             ships[i].get_coordinates(board)
             if board.place_ship(ships[i], board):
                 board.confirm_placement(1)
-                failed_attempt = 0
+                board.print_boards()
                 if board == user_board:
                     board.print_boards()
                 i += 1
             else:
-                board.confirm_placement(0)
-                failed_attempt += 1
-                if failed_attempt == 100:
+                counter = 0
+                for x in board.get_board():
+                    for y in x:
+                        if y == '■':
+                            counter += 1
+                            print("placed ships", counter)
+                if counter == 11:
+                    print("11 placed ships. counter breaking")
+                    break
+
+                failed_attempts += 1
+                print("failed attempts", failed_attempts)
+                print("i", i)
+
+                if failed_attempts == 20:
+                    failed_attempts = 0
+                    print(board.print_boards())
                     board.reload()
+                board.confirm_placement(0)
                 continue
 
 
@@ -223,6 +238,6 @@ Ship.setup_fleet(ai_board)
 battlefield = Board()
 user_board.print_boards(ai_board)
 user_board.print_boards(battlefield)
-# battlefield.shoot(ai_board)
-battlefield.shoot(user_board)
+battlefield.shoot(ai_board)
+# battlefield.shoot(user_board)
 print("Все вражеские корабли взорваны!")
