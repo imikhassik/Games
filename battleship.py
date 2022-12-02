@@ -75,6 +75,21 @@ class Board:
         self.__init__()
         Ship.setup_fleet(self, 1)
 
+    def shoot(self, other):
+        x, y = None, None
+        while True:
+            try:
+                x, y = input("Введите координаты выстрела: ").split()
+                x, y = map(int, (x, y))
+                if x in range(1, 7) and y in range(1, 7):
+                    x -= 1
+                    y -= 1
+                break
+            except ValueError:
+                print("Некорректные координаты. Пример корректного ввода: 2 1")
+                continue
+        self.board[x][y] = 'X' if other.board[x][y] == '■' else 'T'
+
 
 class Ship:
     def __init__(self, x=0, y=0, direction='h', size=3):
@@ -182,4 +197,8 @@ ai_board = Board()
 user_board.print_boards()
 Ship.setup_fleet(user_board)
 Ship.setup_fleet(ai_board)
+battlefield = Board()
 user_board.print_boards(ai_board)
+user_board.print_boards(battlefield)
+battlefield.shoot(ai_board)
+battlefield.print_boards()
