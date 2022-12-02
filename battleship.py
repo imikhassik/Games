@@ -75,6 +75,14 @@ class Board:
         self.__init__()
         Ship.setup_fleet(self, 1)
 
+    @staticmethod
+    def scan(board):
+        for i in board.get_board():
+            for j in i:
+                if j == '■':
+                    return True
+        return False
+
     def shoot(self, other):
         x, y = None, None
         while True:
@@ -88,7 +96,12 @@ class Board:
             except ValueError:
                 print("Некорректные координаты. Пример корректного ввода: 2 1")
                 continue
-        self.board[x][y] = 'X' if other.board[x][y] == '■' else 'T'
+
+        while Board.scan(other):
+            self.board[x][y] = 'X' if other.board[x][y] == '■' else 'T'
+            other.board[x][y] = 'X' if other.board[x][y] == '■' else 'T'
+            user_board.print_boards(battlefield)
+            self.shoot(other)
 
 
 class Ship:
@@ -201,4 +214,4 @@ battlefield = Board()
 user_board.print_boards(ai_board)
 user_board.print_boards(battlefield)
 battlefield.shoot(ai_board)
-battlefield.print_boards()
+battlefield.print_boards(ai_board)
