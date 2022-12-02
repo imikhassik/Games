@@ -195,6 +195,7 @@ class Ship:
             ships[i].get_coordinates(board)
             if board.place_ship(ships[i], board):
                 board.confirm_placement(1)
+                failed_attempt = 0
                 if board == user_board:
                     board.print_boards()
                 i += 1
@@ -203,7 +204,6 @@ class Ship:
                 failed_attempt += 1
                 if failed_attempt == 100:
                     board.reload()
-                    failed_attempt = 0
                 continue
 
 
