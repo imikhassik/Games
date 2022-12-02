@@ -85,7 +85,7 @@ class Board:
 
     def shoot(self, other):
         x, y = None, None
-        while True:
+        while Board.scan(other):
             try:
                 x, y = input("Введите координаты выстрела: ").split()
                 x, y = map(int, (x, y))
@@ -98,7 +98,7 @@ class Board:
                 continue
 
         while Board.scan(other):
-            self.board[x][y] = 'X' if other.board[x][y] == '■' else 'T'
+            self.board[x][y] = f'\033[1;91mX\033[0m' if other.board[x][y] == '■' else '\033[1;37mT\033[0m'
             other.board[x][y] = 'X' if other.board[x][y] == '■' else 'T'
             user_board.print_boards(battlefield)
             self.shoot(other)
@@ -214,4 +214,4 @@ battlefield = Board()
 user_board.print_boards(ai_board)
 user_board.print_boards(battlefield)
 battlefield.shoot(ai_board)
-battlefield.print_boards(ai_board)
+print("Все вражеские корабли взорваны!")
