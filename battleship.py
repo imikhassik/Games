@@ -92,6 +92,9 @@ class Board:
                 if x in range(1, 7) and y in range(1, 7):
                     x -= 1
                     y -= 1
+                if self.board[x][y] != 'O' and self.board[x][y] != '■':
+                    print("Сюда уже стреляли!")
+                    continue
                 break
             except ValueError:
                 print("Некорректные координаты. Пример корректного ввода: 2 1")
