@@ -85,20 +85,27 @@ class Board:
 
     def shoot(self, other):
         x, y = None, None
-        while Board.scan(other):
-            try:
-                x, y = input("Введите координаты выстрела: ").split()
-                x, y = map(int, (x, y))
-                if x in range(1, 7) and y in range(1, 7):
-                    x -= 1
-                    y -= 1
+        if self.board == user_board:
+            while Board.scan(other):
+                try:
+                    x, y = input("Введите координаты выстрела: ").split()
+                    x, y = map(int, (x, y))
+                    if x in range(1, 7) and y in range(1, 7):
+                        x -= 1
+                        y -= 1
+                    if self.board[x][y] != 'O' and self.board[x][y] != '■':
+                        print("Сюда уже стреляли!")
+                        continue
+                    break
+                except ValueError:
+                    print("Некорректные координаты. Пример корректного ввода: 2 1")
+                    continue
+        else:
+            while Board.scan(other):
+                x, y = randint(0, 5), randint(0, 5)
                 if self.board[x][y] != 'O' and self.board[x][y] != '■':
-                    print("Сюда уже стреляли!")
                     continue
                 break
-            except ValueError:
-                print("Некорректные координаты. Пример корректного ввода: 2 1")
-                continue
 
         while Board.scan(other):
             self.board[x][y] = f'\033[1;91mX\033[0m' if other.board[x][y] == '■' else '\033[1;37mT\033[0m'
@@ -216,5 +223,6 @@ Ship.setup_fleet(ai_board)
 battlefield = Board()
 user_board.print_boards(ai_board)
 user_board.print_boards(battlefield)
-battlefield.shoot(ai_board)
+# battlefield.shoot(ai_board)
+battlefield.shoot(user_board)
 print("Все вражеские корабли взорваны!")
