@@ -36,7 +36,8 @@ class Board:
                     return False
             return True
         except IndexError:
-            print("Координаты за пределами поля")
+            if board == user_board:
+                print("Координаты за пределами поля")
             return False
 
     def confirm_placement(self, flag):
@@ -156,13 +157,15 @@ class Ship:
             if reload:
                 i = 0
                 reload = 0
-                board.print_boards()
+                if board == user_board:
+                    board.print_boards()
             ships[i] = Ship()
             ships[i].size = sizes[i]
             ships[i].get_coordinates(board)
             if board.place_ship(ships[i], board):
                 board.confirm_placement(1)
-                board.print_boards()
+                if board == user_board:
+                    board.print_boards()
                 i += 1
             else:
                 board.confirm_placement(0)
@@ -179,3 +182,4 @@ ai_board = Board()
 user_board.print_boards()
 Ship.setup_fleet(user_board)
 Ship.setup_fleet(ai_board)
+user_board.print_boards(ai_board)
