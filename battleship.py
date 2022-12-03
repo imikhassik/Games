@@ -75,9 +75,8 @@ class Board:
         self.__init__()
         Ship.setup_fleet(self, 1)
 
-    @staticmethod
-    def scan(board):
-        for i in board.get_board():
+    def scan(self):
+        for i in self.get_board():
             for j in i:
                 if j == '■':
                     return True
@@ -108,10 +107,18 @@ class Board:
                 break
 
         while Board.scan(other):
-            self.board[x][y] = f'\033[1;91mX\033[0m' if other.board[x][y] == '■' else '\033[1;37mT\033[0m'
-            other.board[x][y] = 'X' if other.board[x][y] == '■' else 'T'
-            user_board.print_boards(battlefield)
-            self.shoot(other)
+            self.board[x][y] = f'\033[1;91mX\033[0m' if other.board[x][y] == '■' else '\033[1;34;1mT\033[0m'
+            other.board[x][y] = f'\033[1;91mX\033[0m' if other.board[x][y] == '■' else '\033[1;34;1mT\033[0m'
+            user_board.print_boards(user_battlefield)
+            break
+
+    @staticmethod
+    def set_turn(t=0):
+        if t:
+            t = 0
+        else:
+            t = 1
+        return t
 
 
 class Ship:
@@ -152,24 +159,33 @@ class Ship:
 
     def radar(self, board):
         search_area = board.get_board().copy()
-        if 0 < self.x < 5 and 0 < self.y < 5:
-            search_area = [row[self.y-1:self.y+2] for row in search_area[self.x-1:self.x+2]]
-        elif self.x == 0 and self.y == 0:
-            search_area = [row[self.y:self.y+2] for row in search_area[self.x:self.x+2]]
-        elif self.x == 5 and self.y == 0:
-            search_area = [row[self.y:self.y+2] for row in search_area[self.x-1:self.x+1]]
-        elif self.x == 0 and self.y == 5:
-            search_area = [row[self.y-1:self.y+1] for row in search_area[self.x:self.x+2]]
-        elif self.x == 5 and self.y == 5:
-            search_area = [row[self.y-1:self.y+1] for row in search_area[self.x-1:self.x+1]]
-        elif self.x == 0:
-            search_area = [row[self.y-1:self.y+2] for row in search_area[self.x:self.x+2]]
-        elif self.x == 5:
-            search_area = [row[self.y-1:self.y+2] for row in search_area[self.x-1:self.x+1]]
-        elif self.y == 0:
-            search_area = [row[self.y:self.y+2] for row in search_area[self.x-1:self.x+2]]
-        elif self.y == 5:
-            search_area = [row[self.y-1:self.y+1] for row in search_area[self.x-1:self.x+2]]
+        try:
+            if self.x < 0 or self.x > 5 or self.y < 0 or self.y > 5:
+                raise ValueError("Координаты за пределами поля")
+            elif 0 < self.x < 5 and 0 < self.y < 5:
+                search_area = [row[self.y-1:self.y+2] for row in search_area[self.x-1:self.x+2]]
+            elif self.x == 0 and self.y == 0:
+                search_area = [row[self.y:self.y+2] for row in search_area[self.x:self.x+2]]
+            elif self.x == 5 and self.y == 0:
+                search_area = [row[self.y:self.y+2] for row in search_area[self.x-1:self.x+1]]
+            elif self.x == 0 and self.y == 5:
+                search_area = [row[self.y-1:self.y+1] for row in search_area[self.x:self.x+2]]
+            elif self.x == 5 and self.y == 5:
+                search_area = [row[self.y-1:self.y+1] for row in search_area[self.x-1:self.x+1]]
+            elif self.x == 0:
+                search_area = [row[self.y-1:self.y+2] for row in search_area[self.x:self.x+2]]
+            elif self.x == 5:
+                search_area = [row[self.y-1:self.y+2] for row in search_area[self.x-1:self.x+1]]
+            elif self.y == 0:
+                search_area = [row[self.y:self.y+2] for row in search_area[self.x-1:self.x+2]]
+            elif self.y == 5:
+                search_area = [row[self.y-1:self.y+1] for row in search_area[self.x-1:self.x+2]]
+        except ValueError:
+            if board == user_board:
+                print("Координаты за пределами поля")
+                return False
+            else:
+                return False
 
         for row in search_area:
             if '■' in row and board == user_board:
@@ -202,29 +218,14 @@ class Ship:
             ships[i].get_coordinates(board)
             if board.place_ship(ships[i], board):
                 board.confirm_placement(1)
-                board.print_boards()
                 if board == user_board:
                     board.print_boards()
                 i += 1
             else:
-                counter = 0
-                for x in board.get_board():
-                    for y in x:
-                        if y == '■':
-                            counter += 1
-                            print("placed ships", counter)
-                if counter == 11:
-                    print("11 placed ships. counter breaking")
-                    break
-
                 failed_attempts += 1
-                print("failed attempts", failed_attempts)
-                print("i", i)
-
-                if failed_attempts == 20:
-                    failed_attempts = 0
-                    print(board.print_boards())
+                if failed_attempts == 100:
                     board.reload()
+                    break
                 board.confirm_placement(0)
                 continue
 
@@ -235,9 +236,22 @@ ai_board = Board()
 user_board.print_boards()
 Ship.setup_fleet(user_board)
 Ship.setup_fleet(ai_board)
-battlefield = Board()
-user_board.print_boards(ai_board)
-user_board.print_boards(battlefield)
-battlefield.shoot(ai_board)
-# battlefield.shoot(user_board)
-print("Все вражеские корабли взорваны!")
+user_battlefield = Board()
+ai_battlefield = Board()
+user_board.print_boards(user_battlefield)
+turn = Board.set_turn()
+print("Теперь стреляйте!")
+while True:
+    if turn:
+        user_battlefield.shoot(ai_board)
+        if not ai_board.scan():
+            print("Все вражеские корабли взорваны!")
+            break
+        turn = Board.set_turn(turn)
+    else:
+        ai_battlefield.shoot(user_board)
+        print("Противник стрелял!")
+        if not user_board.scan():
+            print("Все ваши корабли взорваны. Искусственный интеллект победил!")
+            break
+        turn = Board.set_turn(turn)
