@@ -23,6 +23,7 @@ class Board:
         return self.board
 
     def place_ship(self, ship, board):
+        # Черновое расположение корабля
         try:
             while ship.size:
                 if ship.radar(board):
@@ -41,6 +42,7 @@ class Board:
             return False
 
     def confirm_placement(self, flag):
+        # Если корабль можно расположить, то подтверждает расположение, если нет - откатывает
         if flag:
             for row in range(6):
                 for column in range(6):
@@ -53,6 +55,7 @@ class Board:
                         self.get_board()[row][column] = 'O'
 
     def print_boards(self, other=None):
+        # Печатает одно или два поля
         if other:
             print()
             print('  | 1 | 2 | 3 | 4 | 5 | 6 |       | 1 | 2 | 3 | 4 | 5 | 6 |\n')
@@ -74,10 +77,12 @@ class Board:
                 print('\n')
 
     def reload(self):
+        # Перезагружает поле. Нужна, когда некуда больше поставить корабль.
         self.__init__()
         Ship.setup_fleet(self, 1)
 
     def scan(self):
+        # Проверяет, остались ли еще корабли
         for i in self.get_board():
             for j in i:
                 if j == '■':
@@ -85,6 +90,7 @@ class Board:
         return False
 
     def shoot(self, other):
+        # Получает координаты выстрела и применяет выстрелы на полях
         x, y = None, None
         if other == ai_board:
             while Board.scan(other):
@@ -116,6 +122,7 @@ class Board:
 
     @staticmethod
     def set_turn(t=0):
+        # Меняет очередь
         if t:
             t = 0
         else:
@@ -131,6 +138,7 @@ class Ship:
         self.size = size
 
     def get_coordinates(self, board):
+        # Получает координаты для расположения кораблей
         if board == user_board:
             while True:
                 try:
@@ -160,6 +168,7 @@ class Ship:
                 self.x, self.y = randint(0, 5), randint(0, 5)
 
     def radar(self, board):
+        # Проверяет все клетки вокруг потенциальных координат для расположения корабля
         search_area = board.get_board().copy()
         try:
             if self.x < 0 or self.x > 5 or self.y < 0 or self.y > 5:
@@ -205,6 +214,7 @@ class Ship:
 
     @staticmethod
     def setup_fleet(board, reload=0):
+        # Расставляет корабли по координатам
         ships = {}
         sizes = [3, 2, 2, 1, 1, 1, 1]
         i = 0
