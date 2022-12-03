@@ -54,6 +54,7 @@ class Board:
 
     def print_boards(self, other=None):
         if other:
+            print()
             print('  | 1 | 2 | 3 | 4 | 5 | 6 |       | 1 | 2 | 3 | 4 | 5 | 6 |\n')
             for i in range(6):
                 print(i + 1, end=' | ')
@@ -64,6 +65,7 @@ class Board:
                     print(f"{other.get_board()[i][j]}", end=' | ')
                 print('\n')
         else:
+            print()
             print('  | 1 | 2 | 3 | 4 | 5 | 6 |\n')
             for i in range(6):
                 print(i + 1, end=' | ')
@@ -245,7 +247,7 @@ while True:
     if turn:
         user_battlefield.shoot(ai_board)
         if not ai_board.scan():
-            print("Все вражеские корабли взорваны!")
+            print("Победа! Все вражеские корабли взорваны!")
             break
         turn = Board.set_turn(turn)
     else:
