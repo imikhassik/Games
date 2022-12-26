@@ -2,6 +2,7 @@ import telebot
 
 
 from config import TOKEN, currencies
+from extensions import APIException, Conversion
 
 
 bot = telebot.TeleBot(TOKEN)
@@ -23,9 +24,11 @@ def get_values(message: telebot.types.Message):
 
 
 @bot.message_handler(content_types=['text'])
-def get_input(message: telebot.types.Message):
+def convert_input(message: telebot.types.Message):
     user_input = message.text.split(' ')
     base, quote, amount = user_input[0], user_input[1], user_input[2]
+    result = Conversion.get_price(base, quote, amount)
+    bot.reply_to(message, result)
 
 
 bot.polling()
