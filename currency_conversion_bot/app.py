@@ -25,10 +25,17 @@ def get_values(message: telebot.types.Message):
 
 @bot.message_handler(content_types=['text'])
 def convert_input(message: telebot.types.Message):
-    user_input = message.text.split(' ')
-    base, quote, amount = user_input[0], user_input[1], user_input[2]
-    result = Conversion.get_price(base, quote, amount)
-    bot.reply_to(message, result)
+    try:
+        user_input = message.text.split()
+        if len(user_input) != 3:
+            raise APIException('''Ожидаю 3 значения:\n<какую валюту конвертировать> \
+<в какую валюту конвертировать> <количество>''')
+        base, quote, amount = user_input[0], user_input[1], user_input[2]
+        result = Conversion.get_price(base, quote, amount)
+    except APIException as e:
+        bot.reply_to(message, str(e))
+    else:
+        bot.reply_to(message, result)
 
 
 bot.polling()
